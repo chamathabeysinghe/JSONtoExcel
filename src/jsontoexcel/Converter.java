@@ -121,45 +121,35 @@ public class Converter extends javax.swing.JFrame {
 //            output = new JSONObject(jsonText);
 
             JSONArray array=new JSONArray(jsonText);
-            JSONObject obj=array.getJSONObject(0);
+            JSONArray d=new JSONArray();
             
-            String jsonArrayText=obj.getString("result");
-            //System.out.println(obj.toJSONArray(array));
-            JSONArray docs =new JSONArray(jsonArrayText); //output.getJSONArray("infile");
-//
+            for(int x=0;x<array.length();x++){
+                JSONObject obj=array.getJSONObject(x);
             
-//            JSONArray newArray=new JSONArray();
+                String jsonArrayText=obj.getString("result");
+                //System.out.println(obj.toJSONArray(array));
+                JSONArray docs =new JSONArray(jsonArrayText); //output.getJSONArray("infile");
+                for(int i=0;i<docs.length();i++){
+                    JSONObject subObj=docs.getJSONObject(i);
+                    String stars=subObj.getString("stars");
+                    int end=stars.indexOf("out");
+                    if(end==-1)continue;
+                    String modified=stars.substring(0, end);
+                    subObj.put("stars", modified);
 
-            for(int i=0;i<docs.length();i++){
-                JSONObject subObj=docs.getJSONObject(i);
-                String stars=subObj.getString("stars");
-                int end=stars.indexOf("out");
-                if(end==-1)continue;
-                String modified=stars.substring(0, end);
-                subObj.put("stars", modified);
-                
-                
-                
-                String reviews=subObj.getJSONObject("reviews").getString("no");
-                subObj.put("reviews", reviews);
-                
-//                Map j=new LinkedHashMap();
-//                j.put("asin", subObj.get("asin"));
-//                j.put("name", subObj.get("name"));
-//                j.put("price", subObj.get("price"));
-//                j.put("stars", subObj.get("stars"));
-//                j.put("reviews", subObj.get("reviews"));
-//                j.put("image", subObj.get("image"));
-//                j.put("link", subObj.get("link"));
-//                System.out.println("*******************"+j.toString());
-//                newArray.put(j);
-                
-                
+
+
+                    String reviews=subObj.getJSONObject("reviews").getString("no");
+                    subObj.put("reviews", reviews);
+                    d.put(subObj);
+    
+                }
             }
+            
             
 
             File file=new File(fileName);
-            String csv=CDL.toString(docs);
+            String csv=CDL.toString(d);
 //            String csv = CDL.toString(docs);
             FileUtils.writeStringToFile(file, csv);
             JOptionPane.showMessageDialog(this, "Converted to excel file","Done",JOptionPane.INFORMATION_MESSAGE);
