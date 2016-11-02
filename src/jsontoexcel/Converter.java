@@ -7,18 +7,11 @@ package jsontoexcel;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -117,6 +110,7 @@ public class Converter extends javax.swing.JFrame {
     
     private void writeToExcel(String fileName){
     JSONObject output;
+    int h=0;
         try {
 //            output = new JSONObject(jsonText);
 
@@ -127,27 +121,35 @@ public class Converter extends javax.swing.JFrame {
                 JSONObject obj=array.getJSONObject(x);
             
                 String jsonArrayText=obj.getString("result");
-                //System.out.println(obj.toJSONArray(array));
                 JSONArray docs =new JSONArray(jsonArrayText); //output.getJSONArray("infile");
                 for(int i=0;i<docs.length();i++){
                     JSONObject subObj=docs.getJSONObject(i);
                     String stars=subObj.getString("stars");
+                    if(!subObj.has("name")){
+                        continue;
+                    }
+                    String name=subObj.getString("name");
                     int end=stars.indexOf("out");
-                    if(end==-1)continue;
-                    String modified=stars.substring(0, end);
+                    String modified="";
+                    if(end==-1){
+                        
+                    }
+                    else{
+                       modified =stars.substring(0, end);
+
+                    }
                     subObj.put("stars", modified);
 
 
 
                     String reviews=subObj.getJSONObject("reviews").getString("no");
                     subObj.put("reviews", reviews);
+                    h+=1;
                     d.put(subObj);
     
                 }
             }
             
-            
-
             File file=new File(fileName);
             String csv=CDL.toString(d);
 //            String csv = CDL.toString(docs);
